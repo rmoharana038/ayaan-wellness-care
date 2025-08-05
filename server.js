@@ -117,7 +117,7 @@ async function updateImageReference(indexPath, section, imagePath) {
 async function commitAndPushChanges(message) {
     return new Promise((resolve, reject) => {
         const commands = [
-            'git config --global user.email "gemini-bot@google.com"',
+            '            'git config --global user.email "gemini-bot@google.com"',',
             'git config --global user.name "Gemini Bot"',
             'git add .',
             `git commit -m "${message}"`,
