@@ -117,6 +117,8 @@ async function updateImageReference(indexPath, section, imagePath) {
 async function commitAndPushChanges(message) {
     return new Promise((resolve, reject) => {
         const commands = [
+            'git config --global user.email "gemini-bot@google.com"',
+            'git config --global user.name "Gemini Bot"',
             'git add .',
             `git commit -m "${message}"`,
             `git push https://${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPO_OWNER}/${process.env.GITHUB_REPO_NAME}.git HEAD:${process.env.GITHUB_BRANCH}`
