@@ -25,6 +25,7 @@ const upload = multer({ storage });
 
 // API: Update content
 app.post('/api/update-content', async (req, res) => {
+    console.log('✅ Received request to /api/update-content');
     try {
         const { section, content } = req.body;
         const indexPath = path.join(__dirname, 'index.html');
