@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerPro Admin Panel</title>
+    <title>Ayaan Wellness - Admin Panel</title>
     <link rel="stylesheet" href="admin-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,12 +12,12 @@
     <div class="admin-container">
         <div class="admin-sidebar">
             <div class="admin-logo">
-                <h2>PowerPro</h2>
+                <h2>Ayaan Wellness</h2>
                 <p>Admin Panel</p>
             </div>
             <nav class="admin-nav">
                 <ul>
-                    <li class="active"><a href="#general"><i class="fas fa-cog"></i> General Settings</a></li>
+                    <li class="active"><a href="#general"><i class="fas fa-cog"></i> General</a></li>
                     <li><a href="#hero"><i class="fas fa-home"></i> Hero Section</a></li>
                     <li><a href="#about"><i class="fas fa-user"></i> About Section</a></li>
                     <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
@@ -27,36 +27,26 @@
                 </ul>
             </nav>
             <div class="admin-logout">
-                <a href="index.html" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Back to Website</a>
+                <a href="index.html" target="_blank" class="btn-logout"><i class="fas fa-sign-out-alt"></i> View Website</a>
             </div>
         </div>
         <div class="admin-content">
             <div class="admin-header">
                 <h1>Website Content Editor</h1>
-                <p>Make changes to your website content here</p>
+                <p>Make changes to your website content here. Click "Save Changes" in any section to update the live site.</p>
             </div>
 
             <!-- General Settings Section -->
             <section id="general" class="admin-section active">
-                <div class="section-title">
-                    <h2>General Settings</h2>
-                </div>
+                <div class="section-title"><h2>General Settings</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="site-title">Website Title</label>
-                        <input type="text" id="site-title" value="PowerPro Coaching">
+                        <input type="text" id="site-title" value="Ayaan Wellness Care">
                     </div>
                     <div class="form-group">
                         <label for="site-logo">Logo Text</label>
-                        <input type="text" id="site-logo" value="PowerPro">
-                    </div>
-                    <div class="form-group">
-                        <label for="primary-color">Primary Color</label>
-                        <input type="color" id="primary-color" value="#ff6b6b">
-                    </div>
-                    <div class="form-group">
-                        <label for="favicon">Favicon</label>
-                        <input type="file" id="favicon">
+                        <input type="text" id="site-logo" value="Ayaan Wellness Care">
                     </div>
                     <button class="btn-save">Save Changes</button>
                 </div>
@@ -64,17 +54,15 @@
 
             <!-- Hero Section -->
             <section id="hero" class="admin-section">
-                <div class="section-title">
-                    <h2>Hero Section</h2>
-                </div>
+                <div class="section-title"><h2>Hero Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="hero-title">Hero Title</label>
-                        <input type="text" id="hero-title" value="Hey, I'm Prashant Sharma!">
+                        <input type="text" id="hero-title" value="Hey, I'm Ayaan!">
                     </div>
                     <div class="form-group">
                         <label for="hero-text">Hero Text</label>
-                        <textarea id="hero-text" rows="5">I wasn't born with a fit body—I BUILT it. After 5 years of trial, error, and learning, I cracked the code to sustainable fitness. Now, I help people like you get fit without extreme diets or endless cardio.</textarea>
+                        <textarea id="hero-text" rows="4">I wasn't born with a fit body—I BUILT it. After 5 years of trial, error, and learning, I cracked the code to sustainable fitness. Now, I help people like you get fit without extreme diets or endless cardio.</textarea>
                     </div>
                     <div class="form-group">
                         <label for="hero-subtext">Hero Subtext</label>
@@ -86,10 +74,8 @@
                     </div>
                     <div class="form-group">
                         <label for="hero-image">Hero Image</label>
-                        <input type="file" id="hero-image">
-                        <div class="image-preview">
-                            <img src="images/trainer.jpg" alt="Current Hero Image" id="hero-image-preview">
-                        </div>
+                        <input type="file" id="hero-image" class="image-upload" data-section="hero">
+                        <div class="image-preview"><img src="images/trainer.jpg" alt="Current Hero Image" id="hero-image-preview"></div>
                     </div>
                     <button class="btn-save">Save Changes</button>
                 </div>
@@ -97,9 +83,7 @@
 
             <!-- About Section -->
             <section id="about" class="admin-section">
-                <div class="section-title">
-                    <h2>About Section</h2>
-                </div>
+                <div class="section-title"><h2>About Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="about-title">Section Title</label>
@@ -111,11 +95,7 @@
                     </div>
                     <div class="form-group">
                         <label for="about-text">About Text</label>
-                        <textarea id="about-text" rows="8">After struggling with my own fitness for years, I discovered that sustainable results come from personalized approaches, not one-size-fits-all programs.
-
-With over 5 years of experience and hundreds of success stories, I've developed a system that works for busy professionals who want real results without sacrificing their lifestyle.
-
-My approach combines science-backed training methods with practical nutrition strategies that fit into your real life.</textarea>
+                        <textarea id="about-text" rows="6">After struggling with my own fitness for years, I discovered that sustainable results come from personalized approaches, not one-size-fits-all programs. With over 5 years of experience and hundreds of success stories, I've developed a system that works for busy professionals who want real results without sacrificing their lifestyle. My approach combines science-backed training methods with practical nutrition strategies that fit into your real life.</textarea>
                     </div>
                     <div class="form-group">
                         <label for="about-button">Button Text</label>
@@ -123,10 +103,8 @@ My approach combines science-backed training methods with practical nutrition st
                     </div>
                     <div class="form-group">
                         <label for="about-image">About Image</label>
-                        <input type="file" id="about-image">
-                        <div class="image-preview">
-                            <img src="images/about.jpg" alt="Current About Image" id="about-image-preview">
-                        </div>
+                        <input type="file" id="about-image" class="image-upload" data-section="about">
+                        <div class="image-preview"><img src="images/about.jpg" alt="Current About Image" id="about-image-preview"></div>
                     </div>
                     <button class="btn-save">Save Changes</button>
                 </div>
@@ -134,141 +112,39 @@ My approach combines science-backed training methods with practical nutrition st
 
             <!-- Services Section -->
             <section id="services" class="admin-section">
-                <div class="section-title">
-                    <h2>Services Section</h2>
-                </div>
+                <div class="section-title"><h2>Services Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="services-title">Section Title</label>
                         <input type="text" id="services-title" value="My Services">
                     </div>
-                    
-                    <div class="services-list">
-                        <div class="service-item">
-                            <h3>Service 1</h3>
-                            <div class="form-group">
-                                <label for="service-1-icon">Icon (Font Awesome Class)</label>
-                                <input type="text" id="service-1-icon" value="fas fa-dumbbell">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-1-title">Title</label>
-                                <input type="text" id="service-1-title" value="Personal Training">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-1-desc">Description</label>
-                                <textarea id="service-1-desc" rows="3">Customized workout plans designed specifically for your body type, goals, and lifestyle.</textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="service-item">
-                            <h3>Service 2</h3>
-                            <div class="form-group">
-                                <label for="service-2-icon">Icon (Font Awesome Class)</label>
-                                <input type="text" id="service-2-icon" value="fas fa-apple-alt">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-2-title">Title</label>
-                                <input type="text" id="service-2-title" value="Nutrition Coaching">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-2-desc">Description</label>
-                                <textarea id="service-2-desc" rows="3">Practical nutrition strategies that fit your lifestyle without extreme restrictions.</textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="service-item">
-                            <h3>Service 3</h3>
-                            <div class="form-group">
-                                <label for="service-3-icon">Icon (Font Awesome Class)</label>
-                                <input type="text" id="service-3-icon" value="fas fa-users">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-3-title">Title</label>
-                                <input type="text" id="service-3-title" value="Group Programs">
-                            </div>
-                            <div class="form-group">
-                                <label for="service-3-desc">Description</label>
-                                <textarea id="service-3-desc" rows="3">Join a community of like-minded individuals on the same journey to better health.</textarea>
-                            </div>
-                        </div>
+                    <div id="services-list" class="dynamic-list">
+                        <!-- Service items will be dynamically added here -->
                     </div>
-                    
-                    <button class="btn-add-service">Add New Service</button>
+                    <button type="button" id="add-service-btn" class="btn-add">Add New Service</button>
                     <button class="btn-save">Save Changes</button>
                 </div>
             </section>
 
             <!-- Testimonials Section -->
             <section id="testimonials" class="admin-section">
-                <div class="section-title">
-                    <h2>Testimonials Section</h2>
-                </div>
+                <div class="section-title"><h2>Testimonials Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="testimonials-title">Section Title</label>
                         <input type="text" id="testimonials-title" value="Success Stories">
                     </div>
-                    
-                    <div class="testimonials-list">
-                        <div class="testimonial-item">
-                            <h3>Testimonial 1</h3>
-                            <div class="form-group">
-                                <label for="testimonial-1-text">Testimonial Text</label>
-                                <textarea id="testimonial-1-text" rows="4">Working with PowerPro completely changed my approach to fitness. I've lost 15kg and gained confidence I never thought possible.</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-1-name">Client Name</label>
-                                <input type="text" id="testimonial-1-name" value="Rahul Sharma">
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-1-info">Client Info</label>
-                                <input type="text" id="testimonial-1-info" value="Lost 15kg in 6 months">
-                            </div>
-                        </div>
-                        
-                        <div class="testimonial-item">
-                            <h3>Testimonial 2</h3>
-                            <div class="form-group">
-                                <label for="testimonial-2-text">Testimonial Text</label>
-                                <textarea id="testimonial-2-text" rows="4">As a busy professional, I never thought I'd find time for fitness. The program fits perfectly into my schedule and I've seen amazing results.</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-2-name">Client Name</label>
-                                <input type="text" id="testimonial-2-name" value="Priya Patel">
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-2-info">Client Info</label>
-                                <input type="text" id="testimonial-2-info" value="Gained muscle while losing fat">
-                            </div>
-                        </div>
-                        
-                        <div class="testimonial-item">
-                            <h3>Testimonial 3</h3>
-                            <div class="form-group">
-                                <label for="testimonial-3-text">Testimonial Text</label>
-                                <textarea id="testimonial-3-text" rows="4">The nutrition advice alone was worth the investment. I finally understand how to eat for my goals without feeling deprived.</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-3-name">Client Name</label>
-                                <input type="text" id="testimonial-3-name" value="Amit Kumar">
-                            </div>
-                            <div class="form-group">
-                                <label for="testimonial-3-info">Client Info</label>
-                                <input type="text" id="testimonial-3-info" value="Transformed eating habits">
-                            </div>
-                        </div>
+                    <div id="testimonials-list" class="dynamic-list">
+                        <!-- Testimonial items will be dynamically added here -->
                     </div>
-                    
-                    <button class="btn-add-testimonial">Add New Testimonial</button>
+                    <button type="button" id="add-testimonial-btn" class="btn-add">Add New Testimonial</button>
                     <button class="btn-save">Save Changes</button>
                 </div>
             </section>
 
             <!-- Contact Section -->
             <section id="contact" class="admin-section">
-                <div class="section-title">
-                    <h2>Contact Section</h2>
-                </div>
+                <div class="section-title"><h2>Contact Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="contact-title">Section Title</label>
@@ -312,13 +188,11 @@ My approach combines science-backed training methods with practical nutrition st
 
             <!-- Footer Section -->
             <section id="footer" class="admin-section">
-                <div class="section-title">
-                    <h2>Footer Section</h2>
-                </div>
+                <div class="section-title"><h2>Footer Section</h2></div>
                 <div class="admin-form">
                     <div class="form-group">
                         <label for="footer-logo">Footer Logo Text</label>
-                        <input type="text" id="footer-logo" value="PowerPro">
+                        <input type="text" id="footer-logo" value="Ayaan Wellness">
                     </div>
                     <div class="form-group">
                         <label for="footer-tagline">Footer Tagline</label>
@@ -334,7 +208,7 @@ My approach combines science-backed training methods with practical nutrition st
                     </div>
                     <div class="form-group">
                         <label for="footer-copyright">Copyright Text</label>
-                        <input type="text" id="footer-copyright" value="© 2023 PowerPro Coaching. All Rights Reserved.">
+                        <input type="text" id="footer-copyright" value="© 2025 Ayaan Wellness Care. All Rights Reserved.">
                     </div>
                     <button class="btn-save">Save Changes</button>
                 </div>

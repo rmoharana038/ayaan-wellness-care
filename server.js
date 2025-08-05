@@ -6,24 +6,32 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
+const { JSDOM } = require('jsdom');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname))); // Serve static files from the root
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.static(__dirname));
 
-// Multer setup for file uploads
+// --- Multer Setup for Image Uploads ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, path.join(__dirname, 'images')),
     filename: (req, file, cb) => cb(null, file.originalname),
 });
 const upload = multer({ storage });
 
-// API: Update content
+// --- Centralized Error Handling ---
+const handleError = (res, message, error) => {
+    console.error(`❌ ${message}:`, error);
+    res.status(500).json({ success: false, message, error: error.message });
+};
+
+// --- API Endpoints ---
+
 app.post('/api/update-content', async (req, res) => {
     console.log('✅ Received request to /api/update-content');
     try {
@@ -34,18 +42,24 @@ app.post('/api/update-content', async (req, res) => {
             throw new Error('index.html not found');
         }
 
-        await updateWebsiteContent(indexPath, section, content);
-        await commitAndPushChanges(`Update ${section} section content`);
+        const html = fs.readFileSync(indexPath, 'utf8');
+        const dom = new JSDOM(html);
+        const { document } = dom.window;
+
+        // --- Master Update Function ---
+        updateContent(document, section, content);
+
+        fs.writeFileSync(indexPath, dom.serialize(), 'utf8');
+        await commitAndPushChanges(`Update ${section} content`);
 
         res.status(200).json({ success: true, message: 'Content updated and pushed to GitHub' });
     } catch (error) {
-        console.error('❌ Error updating content:', error);
-        res.status(500).json({ success: false, message: 'Error updating content', error: error.message });
+        handleError(res, 'Error updating content', error);
     }
 });
 
-// API: Upload image
 app.post('/api/upload-image', upload.single('image'), async (req, res) => {
+    console.log('✅ Received request to /api/upload-image');
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
@@ -56,88 +70,152 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
         const indexPath = path.join(__dirname, 'index.html');
 
         if (section && fs.existsSync(indexPath)) {
-            await updateImageReference(indexPath, section, imagePath);
-        }
+            const html = fs.readFileSync(indexPath, 'utf8');
+            const dom = new JSDOM(html);
+            const { document } = dom.window;
 
-        await commitAndPushChanges(`Update ${section} image`);
+            updateImageReference(document, section, imagePath);
+
+            fs.writeFileSync(indexPath, dom.serialize(), 'utf8');
+            await commitAndPushChanges(`Update ${section} image`);
+        }
 
         res.status(200).json({ success: true, message: 'Image uploaded successfully', imagePath });
     } catch (error) {
-        console.error('❌ Error uploading image:', error);
-        res.status(500).json({ success: false, message: 'Error uploading image', error: error.message });
+        handleError(res, 'Error uploading image', error);
     }
 });
 
-// Update content in index.html
-async function updateWebsiteContent(indexPath, section, content) {
-    let html = fs.readFileSync(indexPath, 'utf8');
+// --- HTML Manipulation Functions ---
 
-    // Use DOM manipulation to update content
-    const { JSDOM } = require('jsdom');
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+function updateContent(document, section, content) {
+    const selectors = {
+        general: {
+            title: 'title',
+            logo: '.logo h1',
+        },
+        hero: {
+            title: '.hero-content h1',
+            text: '.hero-content p:nth-of-type(1)',
+            subtext: '.hero-content p:nth-of-type(2)',
+            button: '.hero-content .btn',
+        },
+        about: {
+            title: '#about .section-header h2',
+            subtitle: '.about-text h3',
+            text: '.about-text p',
+            button: '.about-text .btn',
+        },
+        services: {
+            title: '#services .section-header h2',
+            list: '.services-grid',
+        },
+        testimonials: {
+            title: '#testimonials .section-header h2',
+            list: '.testimonial-slider',
+        },
+        contact: {
+            title: '#contact .section-header h2',
+            subtitle: '.contact-info h3',
+            text: '.contact-info > p',
+            email: '.contact-item:nth-of-type(1) p',
+            phone: '.contact-item:nth-of-type(2) p',
+            location: '.contact-item:nth-of-type(3) p',
+            instagram: '.social-links a:nth-of-type(1)',
+            facebook: '.social-links a:nth-of-type(2)',
+            youtube: '.social-links a:nth-of-type(3)',
+        },
+        footer: {
+            logo: '.footer-logo h2',
+            tagline: '.footer-logo p',
+            newsletterTitle: '.footer-newsletter h3',
+            newsletterText: '.footer-newsletter p',
+            copyright: '.footer-bottom p',
+        },
+    };
 
-    switch (section) {
-        case 'general':
-            document.title = content.siteTitle;
-            document.querySelector('.logo h1').textContent = content.logoText;
-            break;
-        case 'hero':
-            document.querySelector('.hero-content h1').textContent = content.title;
-            document.querySelector('.hero-content p:nth-of-type(1)').textContent = content.text;
-            document.querySelector('.hero-content p:nth-of-type(2)').textContent = content.subtext;
-            document.querySelector('.hero-content .btn').textContent = content.buttonText;
-            break;
-        // Add more cases for other sections
+    if (!selectors[section]) return;
+
+    for (const key in content) {
+        if (selectors[section][key]) {
+            const element = document.querySelector(selectors[section][key]);
+            if (element) {
+                if (key.includes('link')) {
+                    element.href = content[key];
+                } else {
+                    element.innerHTML = content[key];
+                }
+            }
+        }
     }
 
-    fs.writeFileSync(indexPath, dom.serialize(), 'utf8');
-}
-
-// Update image paths in index.html
-async function updateImageReference(indexPath, section, imagePath) {
-    let html = fs.readFileSync(indexPath, 'utf8');
-    const { JSDOM } = require('jsdom');
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
-
-    switch (section) {
-        case 'hero':
-            document.getElementById('trainer-image').src = imagePath;
-            break;
-        case 'about':
-            document.getElementById('about-image').src = imagePath;
-            break;
-        // Add more image references as needed
+    // Handle dynamic lists
+    if (section === 'services' && content.services) {
+        const container = document.querySelector(selectors.services.list);
+        container.innerHTML = ''; // Clear existing services
+        content.services.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.innerHTML = `<div class="service-icon"><i class="${s.icon}"></i></div><h3>${s.title}</h3><p>${s.desc}</p>`;
+            container.appendChild(card);
+        });
     }
 
-    fs.writeFileSync(indexPath, dom.serialize(), 'utf8');
+    if (section === 'testimonials' && content.testimonials) {
+        const container = document.querySelector(selectors.testimonials.list);
+        container.innerHTML = ''; // Clear existing testimonials
+        content.testimonials.forEach((t, index) => {
+            const slide = document.createElement('div');
+            slide.className = `testimonial-slide${index === 0 ? ' active' : ''}`;
+            slide.innerHTML = `<div class="testimonial-content"><div class="quote"><i class="fas fa-quote-left"></i></div><p>${t.text}</p><div class="client-info"><h4>${t.name}</h4><p>${t.info}</p></div></div>`;
+            container.appendChild(slide);
+        });
+        // Re-add controls if they were cleared
+        const controls = document.createElement('div');
+        controls.className = 'testimonial-controls';
+        controls.innerHTML = '<button class="prev-btn"><i class="fas fa-chevron-left"></i></button><button class="next-btn"><i class="fas fa-chevron-right"></i></button>';
+        container.appendChild(controls);
+    }
 }
 
-// Commit and push to GitHub
+function updateImageReference(document, section, imagePath) {
+    const selector = {
+        hero: '#trainer-image',
+        about: '#about-image',
+    }[section];
+
+    if (selector) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.src = imagePath;
+        }
+    }
+}
+
+// --- Git & Deployment ---
+
 async function commitAndPushChanges(message) {
     return new Promise((resolve, reject) => {
         const commands = [
-            'git config --global user.email "gemini-bot@google.com"',
-            'git config --global user.name "Gemini Bot"',
+            'git config --global user.email "bot@ayaanwellness.com"',
+            'git config --global user.name "Ayaan Wellness Bot"',
             'git add .',
             `git commit -m "${message}"`,
             `git push https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPO_OWNER}/${process.env.GITHUB_REPO_NAME}.git HEAD:${process.env.GITHUB_BRANCH}`
-        ];
+        ].join(' && ');
 
-        exec(commands.join(' && '), (error, stdout, stderr) => {
+        exec(commands, (error, stdout, stderr) => {
             if (error) {
-                console.error(`exec error: ${error}`);
-                return reject(error);
+                console.error(`Git command failed: ${stderr}`);
+                return reject(new Error(`Git push failed: ${stderr}`));
             }
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
+            console.log(`Git command success: ${stdout}`);
             resolve(stdout);
         });
     });
 }
 
-// Start server
+// --- Start Server ---
 app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
+    console.log(`🚀 Server running on http://localhost:${port}`);
 });
